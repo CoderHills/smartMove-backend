@@ -1,0 +1,13 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2-binary
+python-dotenv
+gunicorn
+Flask-Bcrypt
+PyJWT
+google-api-python-client
+Flask-Cors
+celery
+redis
+requests
