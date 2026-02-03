@@ -17,11 +17,22 @@ def create_app(config_class=Config):
     from app.routes.booking import booking_bp
     from app.routes.mover import mover_bp
     from app.routes.review import review_bp
-    
+    from app.routes.admin import admin_bp
+    from app.routes.chat import chat_bp
+    from app.routes.inventory import inventory_bp
+    from app.routes.maps import maps_bp
+    from app.routes.notification import notification_bp
+
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(booking_bp)
     app.register_blueprint(mover_bp)
     app.register_blueprint(review_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(chat_bp)
+    app.register_blueprint(inventory_bp)
+    app.register_blueprint(maps_bp)
+    app.register_blueprint(notification_bp)
 
     return app

@@ -25,3 +25,4 @@ from .review import Review
 from .inventory import Inventory
 from .chat import Message
 from .notification import Notification
+from .quote import Quote
