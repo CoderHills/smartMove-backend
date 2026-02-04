@@ -1,9 +1,14 @@
-def get_pagination_meta(paginated_obj):
+def paginate_results(query, page, per_page):
+    """Paginates a SQLAlchemy query and returns a dict with metadata."""
+    paginated = query.paginate(page=page, per_page=per_page, error_out=False)
     return {
-        "total": paginated_obj.total,
-        "pages": paginated_obj.pages,
-        "current_page": paginated_obj.page,
-        "per_page": paginated_obj.per_page,
-        "has_next": paginated_obj.has_next,
-        "has_prev": paginated_obj.has_prev
+        "items": paginated.items,
+        "meta": {
+            "total_items": paginated.total,
+            "total_pages": paginated.pages,
+            "current_page": paginated.page,
+            "per_page": paginated.per_page,
+            "has_next": paginated.has_next,
+            "has_prev": paginated.has_prev,
+        },
     }
