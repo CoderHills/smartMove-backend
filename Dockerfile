@@ -27,4 +27,5 @@ USER appuser
 EXPOSE 8000
 
 # Use $PORT if provided by the environment (Railway), fallback to 8000
+CMD ["sh", "-c", "gunicorn run:app --bind 0.0.0.0:${PORT:-8000} --workers 3 --log-file -"]
 CMD ["sh", "-c", "flask db upgrade && gunicorn run:app --bind 0.0.0.0:${PORT:-8000} --workers 3 --log-file -"]
