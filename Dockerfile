@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim as builder
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -15,7 +15,32 @@ RUN apt-get update \
 
 # Install Python dependencies
 COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY requirements-dev.txt ./
+RUN pip install --upgrade pip && pip install -r requirements.txt -r requirements-dev.txt
+
+# Copy application source (for builder if needed, but primarily for understanding context)
+COPY . /app
+
+# --- Production Stage ---
+FROM python:3.11-slim as runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install only essential runtime system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy only production Python dependencies from builder
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/gunicorn
+COPY --from=builder /usr/local/bin/celery /usr/local/bin/celery
+COPY --from=builder /usr/local/bin/flask /usr/local/bin/flask
+COPY requirements.txt .
 
 # Copy application source
 COPY . /app
@@ -27,5 +52,4 @@ USER appuser
 EXPOSE 8000
 
 # Use $PORT if provided by the environment (Railway), fallback to 8000
-CMD ["sh", "-c", "gunicorn run:app --bind 0.0.0.0:${PORT:-8000} --workers 3 --log-file -"]
 CMD ["sh", "-c", "flask db upgrade && gunicorn run:app --bind 0.0.0.0:${PORT:-8000} --workers 3 --log-file -"]

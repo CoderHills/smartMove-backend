@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Confirmation</title>
+</head>
+<body>
+    <p>Dear {{ user_name }},</p>
+    <p>Your booking with SmartMove has been successfully confirmed!</p>
+    <p><strong>Booking Details:</strong></p>
+    <ul>
+        <li>Booking ID: {{ booking_id }}</li>
+        <li>Date: {{ booking_date }}</li>
+        <li>Service: {{ service_type }}</li>
+        <li>Mover: {{ mover_name }}</li>
+        <li>Total Price: {{ total_price }}</li>
+    </ul>
+    <p>Thank you for choosing SmartMove!</p>
+    <p>The SmartMove Team</p>
+</body>
+</html>

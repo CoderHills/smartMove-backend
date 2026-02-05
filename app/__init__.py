@@ -39,4 +39,10 @@ def create_app(config_class=Config):
     # Register error handlers
     register_error_handlers(app)
 
+    # Health check endpoint
+    from flask import jsonify # Import jsonify here or at the top if not already present
+    @app.route('/health', methods=['GET'])
+    def health_check():
+        return jsonify({"status": "ok"}), 200
+
     return app
