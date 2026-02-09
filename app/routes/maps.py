@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.services.google_maps_service import GoogleMapsService
 from app.utils.validators import validate_request
 
@@ -19,4 +19,4 @@ def calculate_distance():
         distance_info = GoogleMapsService.get_distance_matrix(origin, destination)
         return success(distance_info)
     except Exception as e:
-        return error(str(e), 500)
+        return error_response(str(e), 500)

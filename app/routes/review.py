@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from app.models.review import Review
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 from app.utils.validators import validate_request
 
@@ -16,7 +16,7 @@ def create_review(current_user):
         review = Review.create(data)
         return success(review.to_dict(), 201)
     except Exception as e:
-        return error(str(e))
+        return error_response(str(e))
 
 @review_bp.route('/mover/<int:mover_id>', methods=['GET'])
 def get_mover_reviews(mover_id):
@@ -24,4 +24,4 @@ def get_mover_reviews(mover_id):
         reviews = Review.query.filter_by(mover_id=mover_id).all()
         return success([r.to_dict() for r in reviews])
     except Exception as e:
-        return error(str(e))
+        return error_response(str(e))

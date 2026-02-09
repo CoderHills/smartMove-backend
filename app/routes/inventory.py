@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 from app.utils.validators import validate_request
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required, admin_required
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -22,5 +22,5 @@ def get_dashboard_data(current_user):
         }
         return success(dashboard_data)
     except Exception as e:
-        return error(str(e), 500)
+        return error_response(str(e), 500)
 
