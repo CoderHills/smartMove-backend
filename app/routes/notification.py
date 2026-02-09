@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 from app.models.notification import Notification
 
@@ -15,7 +15,7 @@ def get_notifications(current_user):
         notifications = Notification.query.filter_by(user_id=current_user.id).all()
         return success([notification.to_dict() for notification in notifications])
     except Exception as e:
-        return error(str(e), 500)
+        return error_response(str(e), 500)
 
 @notification_bp.route('/<int:notification_id>/read', methods=['PUT'])
 @jwt_required
@@ -29,4 +29,4 @@ def mark_as_read(current_user, notification_id):
         notification.save()
         return success({"message": "Notification marked as read."})
     except Exception as e:
-        return error(str(e), 500)
+        return error_response(str(e), 500)

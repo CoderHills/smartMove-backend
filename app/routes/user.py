@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from app.models.user import User
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 
 user_bp = Blueprint('user', __name__, url_prefix='/users')
@@ -20,4 +20,4 @@ def update_profile(current_user):
         current_user.save()
         return success(current_user.to_dict())
     except Exception as e:
-        return error(str(e))
+        return error_response(str(e))

@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.utils.response import success, error
+from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/chats')
@@ -16,7 +16,7 @@ def create_chat_session(current_user):
     
     # Validate request data
     if not data or 'recipient_id' not in data:
-        return error("Recipient ID is required.", 400)
+        return error_response("Recipient ID is required.", 400)
         
     recipient_id = data['recipient_id']
     
@@ -39,7 +39,7 @@ def send_message(current_user, chat_session_id):
     
     # Validate request data
     if not data or 'message_body' not in data:
-        return error("Message body is required.", 400)
+        return error_response("Message body is required.", 400)
     
     message_body = data['message_body']
     

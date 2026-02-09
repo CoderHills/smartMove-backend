@@ -1,7 +1,7 @@
 import re
 from functools import wraps
 from flask import request
-from .response import error
+from .response import error_response
 
 class Validator:
     @staticmethod
@@ -63,7 +63,7 @@ def validate_request(*required_fields):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not request.is_json:
-                return error("Request must be JSON", 415) # Use 415 for Unsupported Media Type
+                return error_response("Request must be JSON", 415) # Use 415 for Unsupported Media Type
             
             data = request.get_json()
             
@@ -71,7 +71,7 @@ def validate_request(*required_fields):
             is_valid, message = Validator.validate_required_fields(data, required_fields)
             
             if not is_valid:
-                return error(message, 400) # 400 for Bad Request
+                return error_response(message, 400) # 400 for Bad Request
             
             return f(*args, **kwargs)
         return decorated_function

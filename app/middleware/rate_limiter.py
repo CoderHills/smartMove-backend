@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import request
-from app.utils.response import error
+from app.utils.response import error_response
 import time
 
 # Simple in-memory storage for rate limiting
@@ -35,7 +35,7 @@ def rate_limit(limit, per):
             _request_counts[client_ip] += 1
 
             if _request_counts[client_ip] > limit:
-                return error(f"Too Many Requests: Rate limit exceeded. Try again in {per} seconds.", 429)
+                return error_response(f"Too Many Requests: Rate limit exceeded. Try again in {per} seconds.", 429)
 
             return f(*args, **kwargs)
         return decorated_function

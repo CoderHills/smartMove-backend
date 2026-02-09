@@ -57,3 +57,7 @@ def sample_user(init_database):
     init_database.session.add(user)
     init_database.session.commit()
     return user
+
+@pytest.fixture(scope='session')
+def app(test_app):
+    yield test_app
