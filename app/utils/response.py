@@ -1,12 +1,11 @@
 from flask import jsonify
 
 
-def success(data=None, message="Operation successful", status_code=200):
-    """Standardized success response format."""
+def success(data=None, message="Success", status_code=200):
     return jsonify({"status": "success", "message": message, "data": data}), status_code
 
 
-def error(message="An error occurred", status_code=400, errors=None):
+def error_response(message="An error occurred", status_code=400, errors=None):
     """Standardized error response format."""
     payload = {"status": "error", "message": message}
     if errors:
