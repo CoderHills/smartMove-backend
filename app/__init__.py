@@ -24,8 +24,6 @@ def create_app(config_class=Config):
     from app.routes.inventory import inventory_bp
     from app.routes.maps import maps_bp
     from app.routes.notification import notification_bp
-    from app.routes.payments import payment_bp
-    # Inside your create_app() function
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
@@ -37,18 +35,12 @@ def create_app(config_class=Config):
     app.register_blueprint(inventory_bp)
     app.register_blueprint(maps_bp)
     app.register_blueprint(notification_bp)
-    app.register_blueprint(payment_bp, url_prefix="/api/payments")
 
     # Register error handlers
     register_error_handlers(app)
 
     # Health check endpoint
     @app.route('/health', methods=['GET'])
-    from flask import (
-        jsonify,
-    )  # Import jsonify here or at the top if not already present
-
-    @app.route("/health", methods=["GET"])
     def health_check():
         return jsonify({"status": "ok"}), 200
 
