@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from app.config import Config
-from app.extensions import db, migrate, cors
+from app.extensions import db, migrate, cors, bcrypt
 from app.utils.errors import register_error_handlers
 
 
@@ -12,6 +12,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app)
+    bcrypt.init_app(app)
 
     # Register blueprints
     from app.routes.auth import auth_bp
@@ -39,9 +40,19 @@ def create_app(config_class=Config):
     # Register error handlers
     register_error_handlers(app)
 
-    # Health check endpoint
+    # Health check endpoint for Render/load balancers
     @app.route('/health', methods=['GET'])
     def health_check():
+        """Basic health check - returns 200 if app is running."""
         return jsonify({"status": "ok"}), 200
+
+    @app.route('/health/ready', methods=['GET'])
+    def readiness_check():
+        """Readiness check - verifies database connectivity."""
+        try:
+            db.session.execute(db.text('SELECT 1'))
+            return jsonify({"status": "ready", "database": "connected"}), 200
+        except Exception as e:
+            return jsonify({"status": "not ready", "database": "disconnected", "error": str(e)}), 503
 
     return app

@@ -1,14 +1,14 @@
-import os
 from celery import Celery
 
 # Get Flask app factory
 from app import create_app
 
 def make_celery(app):
+    """Create Celery instance using Flask app config."""
     celery = Celery(
         app.import_name,
-        broker=os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0'),
-        backend=os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+        broker=app.config.get('CELERY_BROKER_URL'),
+        backend=app.config.get('CELERY_RESULT_BACKEND')
     )
     celery.conf.update(app.config)
 

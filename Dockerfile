@@ -51,5 +51,8 @@ USER appuser
 
 EXPOSE 8000
 
-# Use $PORT if provided by the environment (Railway), fallback to 8000
-CMD gunicorn wsgi:app --bind 0.0.0.0:${PORT:-8000} --workers 3 --log-file -
+# Set Flask app for potential CLI usage
+ENV FLASK_APP=wsgi:app
+
+# Use gunicorn config file for consistent settings
+CMD ["gunicorn", "wsgi:app", "--config", "gunicorn.conf.py"]
