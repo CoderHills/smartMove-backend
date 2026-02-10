@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from app.config import Config
 from app.extensions import db, migrate, cors
 from app.utils.errors import register_error_handlers
@@ -24,7 +24,6 @@ def create_app(config_class=Config):
     from app.routes.maps import maps_bp
     from app.routes.notification import notification_bp
 
-
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(booking_bp)
@@ -40,7 +39,6 @@ def create_app(config_class=Config):
     register_error_handlers(app)
 
     # Health check endpoint
-    from flask import jsonify # Import jsonify here or at the top if not already present
     @app.route('/health', methods=['GET'])
     def health_check():
         return jsonify({"status": "ok"}), 200
