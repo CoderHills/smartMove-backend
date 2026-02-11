@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from app.config import Config
 from app.extensions import db, migrate, cors, bcrypt
 from app.utils.errors import register_error_handlers
@@ -40,23 +40,27 @@ def create_app(config_class=Config):
     # Register error handlers
     register_error_handlers(app)
 
-    # Global OPTIONS handler for CORS preflight requests
-    @app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
-    @app.route('/<path:path>', methods=['OPTIONS'])
-    def handle_options(path):
-        response = jsonify({'status': 'ok'})
+    # Add CORS headers to all responses
+    @app.after_request
+    def add_cors_headers(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
+    # Handle OPTIONS requests globally
+    @app.before_request
+    def handle_options():
+        if request.method == 'OPTIONS':
+            return '', 200
+
     # Health check endpoint for Render/load balancers
-    @app.route('/health', methods=['GET'])
+    @app.route('/health', methods=['GET', 'HEAD', 'OPTIONS'])
     def health_check():
         """Basic health check - returns 200 if app is running."""
         return jsonify({"status": "ok"}), 200
 
-    @app.route('/health/ready', methods=['GET'])
+    @app.route('/health/ready', methods=['GET', 'HEAD', 'OPTIONS'])
     def readiness_check():
         """Readiness check - verifies database connectivity."""
         try:
