@@ -28,7 +28,7 @@ class Booking(BaseModel):
     
     amount = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)
     mpesa_receipt_number = db.Column(db.String(20), nullable=True)
-    payment_status = db.Column(db.Enum(PaymentStatus), default=PaymentStatus.PENDING, nullable=False)
+    payment_status = db.Column(db.String(20), default='PENDING', nullable=False)
     checkout_request_id = db.Column(db.String(50), nullable=True)
     
     user = db.relationship('User', backref='bookings')

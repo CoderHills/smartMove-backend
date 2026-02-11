@@ -17,11 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    # Create enum types first (for PostgreSQL compatibility)
-    op.execute("DO $$ BEGIN CREATE TYPE quotestatus AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED'); EXCEPTION WHEN duplicate_object THEN null; END $$;")
-    op.execute("DO $$ BEGIN CREATE TYPE paymentstatus AS ENUM ('PENDING', 'COMPLETED', 'FAILED'); EXCEPTION WHEN duplicate_object THEN null; END $$;")
-    
-    # Create quotes table
+    # Create quotes table (using VARCHAR for status to avoid enum issues)
     op.create_table('quotes',
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('mover_id', sa.Integer(), nullable=True),
@@ -30,7 +26,7 @@ def upgrade():
     sa.Column('distance_meters', sa.Integer(), nullable=False),
     sa.Column('volume_cubic_meters', sa.Float(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('status', sa.Enum('PENDING', 'ACCEPTED', 'REJECTED', name='quotestatus'), nullable=False),
+    sa.Column('status', sa.String(20), nullable=False, default='PENDING'),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['dropoff_address_id'], ['addresses.id'], ),
     sa.ForeignKeyConstraint(['mover_id'], ['movers.id'], ),
@@ -40,7 +36,7 @@ def upgrade():
     )
     op.add_column('bookings', sa.Column('amount', sa.Numeric(precision=10, scale=2), nullable=False))
     op.add_column('bookings', sa.Column('mpesa_receipt_number', sa.String(length=20), nullable=True))
-    op.add_column('bookings', sa.Column('payment_status', sa.Enum('PENDING', 'COMPLETED', 'FAILED', name='paymentstatus'), nullable=False))
+    op.add_column('bookings', sa.Column('payment_status', sa.String(20), nullable=False, default='PENDING'))
     op.add_column('bookings', sa.Column('checkout_request_id', sa.String(length=50), nullable=True))
     # ### end Alembic commands ###
 
