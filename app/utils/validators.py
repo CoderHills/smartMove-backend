@@ -62,6 +62,10 @@ def validate_request(*required_fields):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            # Skip validation for OPTIONS requests (CORS preflight)
+            if request.method == 'OPTIONS':
+                return f(*args, **kwargs)
+            
             if not request.is_json:
                 return error_response("Request must be JSON", 415) # Use 415 for Unsupported Media Type
             
