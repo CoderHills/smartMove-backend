@@ -5,5 +5,5 @@ from flask_bcrypt import Bcrypt
 
 db = SQLAlchemy()
 migrate = Migrate()
-cors = CORS()
+cors = CORS(supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
 bcrypt = Bcrypt()
