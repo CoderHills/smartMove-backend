@@ -45,8 +45,11 @@ COPY requirements.txt .
 # Copy application source
 COPY . /app
 
-# Make entrypoint script executable BEFORE creating user
-RUN chmod +x /entrypoint.sh
+# Copy application source
+COPY . /app
+
+# Make entrypoint script executable (it's in /app/)
+RUN chmod +x /app/entrypoint.sh
 
 # Create a non-root user and adjust ownership
 RUN useradd -m appuser && chown -R appuser /app
