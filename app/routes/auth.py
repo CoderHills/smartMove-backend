@@ -5,7 +5,7 @@ from app.utils.validators import validate_request
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
 @validate_request('email', 'password', 'role')
 def register():
     data = request.get_json()
@@ -15,12 +15,12 @@ def register():
     except Exception as e:
         return error_response(str(e))
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
 @validate_request('email', 'password')
 def login():
     data = request.get_json()
     try:
-        token = AuthService.login_user(data['email'], data['password'])
-        return success({'token': token})
+        result = AuthService.login_user(data['email'], data['password'])
+        return success(result)  # Result already contains {token, user}
     except Exception as e:
         return error_response(str(e), 401)
