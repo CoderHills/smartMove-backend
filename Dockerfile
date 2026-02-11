@@ -52,6 +52,9 @@ USER appuser
 EXPOSE 8000
 
 # Set Flask app for potential CLI usage
+
+# Run migrations before starting gunicorn
+RUN flask db upgrade
 ENV FLASK_APP=wsgi:app
 
 # Use gunicorn config file for consistent settings
