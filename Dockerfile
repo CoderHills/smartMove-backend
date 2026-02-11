@@ -51,11 +51,12 @@ USER appuser
 
 EXPOSE 8000
 
-# Set Flask app for potential CLI usage
-
-# Run migrations before starting gunicorn
-RUN flask db upgrade
+# Set Flask app
 ENV FLASK_APP=wsgi:app
 
-# Use gunicorn config file for consistent settings
-CMD ["gunicorn", "wsgi:app", "--config", "gunicorn.conf.py"]
+# Copy and make entrypoint script executable
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Use entrypoint script to run migrations at runtime
+CMD ["/entrypoint.sh"]
