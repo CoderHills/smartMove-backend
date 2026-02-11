@@ -2,10 +2,15 @@ from app.extensions import db
 from . import BaseModel
 import enum
 
+class PaymentStatus(enum.Enum):
+    PENDING = 'pending'
+    COMPLETED = 'completed'
+    FAILED = 'failed'
+
 class BookingStatus(enum.Enum):
     PENDING = 'pending'
     CONFIRMED = 'confirmed'
-    IN_PROGRESS = 'in_progress'
+    IN_PROGRESS = 'in_PROGRESS'
     COMPLETED = 'completed'
     CANCELLED = 'cancelled'
 
@@ -20,6 +25,11 @@ class Booking(BaseModel):
     
     booking_time = db.Column(db.DateTime(timezone=True), nullable=False)
     status = db.Column(db.Enum(BookingStatus), default=BookingStatus.PENDING, nullable=False)
+    
+    amount = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)
+    mpesa_receipt_number = db.Column(db.String(20), nullable=True)
+    payment_status = db.Column(db.Enum(PaymentStatus), default=PaymentStatus.PENDING, nullable=False)
+    checkout_request_id = db.Column(db.String(50), nullable=True)
     
     user = db.relationship('User', backref='bookings')
     mover = db.relationship('Mover', backref='bookings')

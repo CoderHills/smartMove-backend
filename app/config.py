@@ -28,3 +28,12 @@ class Config:
     REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
     CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL') or REDIS_URL
     CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND') or REDIS_URL
+
+    # MPESA Configuration
+    MPESA_BASE_URL = os.environ.get('MPESA_BASE_URL')
+    MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+    MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
+    MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
+    MPESA_PASSKEY = os.environ.get('MPESA_PASSKEY')
+    CALLBACK_URL = os.environ.get('CALLBACK_URL')
+

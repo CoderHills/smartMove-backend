@@ -17,7 +17,7 @@ This is the backend service for the SmartMove application, built with Flask.
 
 ## Features
 
-(To be populated as features are implemented)
+-   MPESA Integration: Supports STK Push for initiating payments and a callback mechanism to handle transaction results.
 
 ## Setup
 
@@ -60,6 +60,12 @@ DATABASE_URL='sqlite:///app.db' # For local development with SQLite
 CELERY_BROKER_URL='redis://localhost:6379/0'
 CELERY_RESULT_BACKEND='redis://localhost:6379/0'
 # Add other environment variables as needed (e.g., API keys, email service credentials)
+MPESA_BASE_URL='https://sandbox.safaricom.co.ke' # Or production URL
+MPESA_CONSUMER_KEY='your_mpesa_consumer_key'
+MPESA_CONSUMER_SECRET='your_mpesa_consumer_secret'
+MPESA_SHORTCODE='your_mpesa_shortcode' # Paybill or Till Number
+MPESA_PASSKEY='your_mpesa_passkey' # For STK Push
+CALLBACK_URL='https://your_backend_url.com/payments/callback' # Your deployed backend callback URL
 ```
 
 ## Running the Application
