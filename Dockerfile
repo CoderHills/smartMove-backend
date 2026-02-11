@@ -45,6 +45,9 @@ COPY requirements.txt .
 # Copy application source
 COPY . /app
 
+# Make entrypoint script executable BEFORE creating user
+RUN chmod +x /entrypoint.sh
+
 # Create a non-root user and adjust ownership
 RUN useradd -m appuser && chown -R appuser /app
 USER appuser
@@ -53,10 +56,6 @@ EXPOSE 8000
 
 # Set Flask app
 ENV FLASK_APP=wsgi:app
-
-# Copy and make entrypoint script executable
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 # Use entrypoint script to run migrations at runtime
 CMD ["/entrypoint.sh"]
