@@ -14,7 +14,7 @@ def create_app(config_class=Config):
     cors.init_app(app)
     bcrypt.init_app(app)
 
-    # Register blueprints
+    # Register blueprints with /api prefix
     from app.routes.auth import auth_bp
     from app.routes.user import user_bp
     from app.routes.booking import booking_bp
@@ -26,19 +26,29 @@ def create_app(config_class=Config):
     from app.routes.maps import maps_bp
     from app.routes.notification import notification_bp
 
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(user_bp)
-    app.register_blueprint(booking_bp)
-    app.register_blueprint(mover_bp)
-    app.register_blueprint(review_bp)
-    app.register_blueprint(admin_bp)
-    app.register_blueprint(chat_bp)
-    app.register_blueprint(inventory_bp)
-    app.register_blueprint(maps_bp)
-    app.register_blueprint(notification_bp)
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(user_bp, url_prefix='/api/user')
+    app.register_blueprint(booking_bp, url_prefix='/api/booking')
+    app.register_blueprint(mover_bp, url_prefix='/api/mover')
+    app.register_blueprint(review_bp, url_prefix='/api/review')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(chat_bp, url_prefix='/api/chat')
+    app.register_blueprint(inventory_bp, url_prefix='/api/inventory')
+    app.register_blueprint(maps_bp, url_prefix='/api/maps')
+    app.register_blueprint(notification_bp, url_prefix='/api/notification')
 
     # Register error handlers
     register_error_handlers(app)
+
+    # Global OPTIONS handler for CORS preflight requests
+    @app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+    @app.route('/<path:path>', methods=['OPTIONS'])
+    def handle_options(path):
+        response = jsonify({'status': 'ok'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        return response
 
     # Health check endpoint for Render/load balancers
     @app.route('/health', methods=['GET'])
