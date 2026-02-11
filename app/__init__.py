@@ -54,6 +54,20 @@ def create_app(config_class=Config):
         if request.method == 'OPTIONS':
             return '', 200
 
+    # Root route - redirect to API docs or return welcome message
+    @app.route('/', methods=['GET', 'HEAD', 'OPTIONS'])
+    def root():
+        """Root endpoint - redirects to health check or API info."""
+        return jsonify({
+            "status": "ok",
+            "message": "SmartMove API is running",
+            "endpoints": {
+                "health": "/health",
+                "health_ready": "/health/ready",
+                "api_prefix": "/api"
+            }
+        }), 200
+
     # Health check endpoint for Render/load balancers
     @app.route('/health', methods=['GET', 'HEAD', 'OPTIONS'])
     def health_check():
