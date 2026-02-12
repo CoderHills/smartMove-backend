@@ -1,0 +1,22 @@
+<parameter name="content">#!/bin/bash
+set -e
+
+# Set Flask app for CLI commands
+export FLASK_APP=wsgi:app
+
+# Fix PostgreSQL ENUM issue - convert role column from ENUM to VARCHAR
+# This handles the case where an old ENUM type exists in the database
+python scripts/fix_enum.py || true
+
+# Run Flask database migrations
+flask db upgrade
+
+# Start Gunicorn with config file
+# PORT is provided by Render/Heroku, fallback to 8000 for local
+exec gunicorn wsgi:app \
+    --bind 0.0.0.0:${PORT:-8000} \
+    --workers ${GUNICORN_WORKERS:-2} \
+    --timeout 120 \
+    --log-file - \
+    --access-logfile -
+</parameter>
