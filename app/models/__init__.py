@@ -1,4 +1,3 @@
-import enum
 from app.extensions import db
 
 class BaseModel(db.Model):
@@ -17,11 +16,7 @@ class BaseModel(db.Model):
     def to_dict(self):
         d = {}
         for c in self.__table__.columns:
-            val = getattr(self, c.name)
-            if isinstance(val, enum.Enum):
-                d[c.name] = val.value
-            else:
-                d[c.name] = val
+            d[c.name] = getattr(self, c.name)
         return d
 
 # Import all models here
