@@ -2,7 +2,7 @@ import jwt
 from functools import wraps
 from flask import request, current_app, g
 from app.utils.response import error_response
-from app.models.user import User, UserRole
+from app.models.user import User
 
 def jwt_required(f):
     @wraps(f)
@@ -42,8 +42,8 @@ def roles_required(*roles):
                 return error_response("Authentication required.", 401)
             
             user = g.current_user
-            # .value gets the string representation of the enum, e.g., 'customer'
-            if user.role.value not in roles:
+            # Check if user role is in the allowed roles
+            if user.role not in roles:
                 return error_response("User does not have the required permissions.", 403)
 
             # Pass the user object to the decorated function
@@ -60,7 +60,7 @@ def admin_required(f):
             return error_response("Authentication required. Use @jwt_required before @admin_required.", 401)
         
         user = g.current_user
-        if user.role != UserRole.ADMIN:
+        if user.role != 'admin':
             return error_response("Administrator access required.", 403)
         
         # Pass the user object to the decorated function

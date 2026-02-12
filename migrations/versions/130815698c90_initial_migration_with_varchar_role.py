@@ -1,8 +1,8 @@
-"""Initial migration.
+"""Initial migration with VARCHAR role
 
-Revision ID: f7bfc2104dfd
+Revision ID: 130815698c90
 Revises: 
-Create Date: 2026-02-03 10:36:30.927239
+Create Date: 2026-02-12 04:40:49.188309
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f7bfc2104dfd'
+revision = '130815698c90'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('users',
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
-    sa.Column('role', sa.Enum('CUSTOMER', 'MOVER', 'ADMIN', name='userrole'), nullable=False),
+    sa.Column('role', sa.String(length=20), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
@@ -62,8 +62,28 @@ def upgrade():
     sa.Column('mover_id', sa.Integer(), nullable=False),
     sa.Column('pickup_address_id', sa.Integer(), nullable=False),
     sa.Column('dropoff_address_id', sa.Integer(), nullable=False),
-    sa.Column('booking_time', sa.DateTime(), nullable=False),
+    sa.Column('booking_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('status', sa.Enum('PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', name='bookingstatus'), nullable=False),
+    sa.Column('amount', sa.Numeric(precision=10, scale=2), nullable=False),
+    sa.Column('mpesa_receipt_number', sa.String(length=20), nullable=True),
+    sa.Column('payment_status', sa.String(length=20), nullable=False),
+    sa.Column('checkout_request_id', sa.String(length=50), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['dropoff_address_id'], ['addresses.id'], ),
+    sa.ForeignKeyConstraint(['mover_id'], ['movers.id'], ),
+    sa.ForeignKeyConstraint(['pickup_address_id'], ['addresses.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('quotes',
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('mover_id', sa.Integer(), nullable=True),
+    sa.Column('pickup_address_id', sa.Integer(), nullable=False),
+    sa.Column('dropoff_address_id', sa.Integer(), nullable=False),
+    sa.Column('distance_meters', sa.Integer(), nullable=False),
+    sa.Column('volume_cubic_meters', sa.Float(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['dropoff_address_id'], ['addresses.id'], ),
     sa.ForeignKeyConstraint(['mover_id'], ['movers.id'], ),
@@ -110,6 +130,7 @@ def downgrade():
     op.drop_table('reviews')
     op.drop_table('messages')
     op.drop_table('inventories')
+    op.drop_table('quotes')
     op.drop_table('bookings')
     op.drop_table('notifications')
     op.drop_table('movers')

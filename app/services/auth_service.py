@@ -1,5 +1,5 @@
 
-from app.models.user import User, UserRole
+from app.models.user import User
 from app.extensions import db
 from flask import current_app
 import jwt
@@ -10,20 +10,18 @@ class AuthService:
     def register_user(data):
         email = data.get('email')
         password = data.get('password')
-        role_str = data.get('role', 'customer')
+        role_str = data.get('role', 'client')
         
-        # Safely convert role string to UserRole enum
-        try:
-            role = UserRole(role_str)
-        except ValueError:
-            # Default to CLIENT if an invalid role is provided
-            role = UserRole.CLIENT
+        # Validate role string
+        valid_roles = ['client', 'mover', 'admin']
+        if role_str not in valid_roles:
+            role_str = 'client'  # Default to client if invalid
 
         if User.query.filter_by(email=email).first():
             raise Exception("User with this email already exists.")
 
         # Pass string value to database (VARCHAR column)
-        new_user = User(email=email, role=role.value)
+        new_user = User(email=email, role=role_str)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -37,7 +35,7 @@ class AuthService:
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user.id,
-                'role': user.role.value if hasattr(user.role, 'value') else user.role
+                'role': user.role
             }
             token = jwt.encode(
                 payload,
