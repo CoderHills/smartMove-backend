@@ -1,17 +1,12 @@
 #!/bin/bash
 set -e
 
-# Debug: log what's happening
 echo "=== Starting deployment script ==="
 echo "FLASK_APP=$FLASK_APP"
 
-# Set Flask app for CLI commands
 export FLASK_APP=wsgi:app
 
-echo "Running flask db stamp..."
-flask db stamp cc862af7b8f7 || echo "Stamp failed, continuing..."
-
-echo "Running flask db upgrade..."
+echo "Running flask db upgrade (creating tables)..."
 flask db upgrade || echo "Upgrade completed"
 
 echo "Starting Gunicorn..."
