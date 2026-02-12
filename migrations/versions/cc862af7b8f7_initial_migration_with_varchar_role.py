@@ -1,8 +1,8 @@
 """Initial migration with VARCHAR role
 
-Revision ID: 970c4671da20
+Revision ID: cc862af7b8f7
 Revises: 
-Create Date: 2026-02-12 04:46:47.697655
+Create Date: 2026-02-12 04:51:19.687220
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '970c4671da20'
+revision = 'cc862af7b8f7'
 down_revision = None
 branch_labels = None
 depends_on = None
