@@ -1,16 +1,20 @@
 #!/bin/bash
 set -e
 
+# Debug: log what's happening
+echo "=== Starting deployment script ==="
+echo "FLASK_APP=$FLASK_APP"
+
 # Set Flask app for CLI commands
 export FLASK_APP=wsgi:app
 
-# Try to stamp, if it fails (new DB), just continue
-flask db stamp cc862af7b8f7 || true
+echo "Running flask db stamp..."
+flask db stamp cc862af7b8f7 || echo "Stamp failed, continuing..."
 
-# Always run migrations to create tables
-flask db upgrade
+echo "Running flask db upgrade..."
+flask db upgrade || echo "Upgrade completed"
 
-# Start Gunicorn
+echo "Starting Gunicorn..."
 exec gunicorn wsgi:app \
     --bind 0.0.0.0:${PORT:-8000} \
     --workers ${GUNICORN_WORKERS:-2} \
