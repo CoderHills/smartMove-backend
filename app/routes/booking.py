@@ -5,7 +5,7 @@ from app.utils.decorators import jwt_required
 from app.utils.validators import validate_request
 from app.models.booking import Booking, BookingStatus
 
-booking_bp = Blueprint('booking', __name__, url_prefix='/bookings')
+booking_bp = Blueprint('booking', __name__, url_prefix='')
 
 @booking_bp.route('', methods=['GET'])
 @jwt_required
