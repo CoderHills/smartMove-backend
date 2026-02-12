@@ -1,3 +1,4 @@
+
 from app.models.user import User, UserRole
 from app.extensions import db
 from flask import current_app
@@ -15,13 +16,14 @@ class AuthService:
         try:
             role = UserRole(role_str)
         except ValueError:
-            # Default to CUSTOMER if an invalid role is provided
-            role = UserRole.CUSTOMER
+            # Default to CLIENT if an invalid role is provided
+            role = UserRole.CLIENT
 
         if User.query.filter_by(email=email).first():
             raise Exception("User with this email already exists.")
 
-        new_user = User(email=email, role=role)
+        # Pass string value to database (VARCHAR column)
+        new_user = User(email=email, role=role.value)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -35,7 +37,7 @@ class AuthService:
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user.id,
-                'role': user.role.value
+                'role': user.role.value if hasattr(user.role, 'value') else user.role
             }
             token = jwt.encode(
                 payload,
@@ -50,3 +52,4 @@ class AuthService:
                 'user': user_data
             }
         raise Exception("Invalid email or password.")
+
