@@ -2,12 +2,11 @@
 set -e
 
 echo "=== Starting deployment script ==="
-echo "FLASK_APP=$FLASK_APP"
-
 export FLASK_APP=wsgi:app
 
-echo "Running flask db upgrade (creating tables)..."
-flask db upgrade || echo "Upgrade completed"
+# Create tables directly using SQLAlchemy (more reliable than migrations)
+echo "Creating database tables..."
+python scripts/create_tables.py
 
 echo "Starting Gunicorn..."
 exec gunicorn wsgi:app \
